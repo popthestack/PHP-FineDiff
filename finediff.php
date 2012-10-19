@@ -297,7 +297,7 @@ class FineDiff {
 	public static function renderDiffToUnbinderyFromOpcodes($from, $opcodes) {
 		ob_start();
 		FineDiff::renderFromOpcodes($from, $opcodes, array('FineDiff','renderDiffToUnbinderyFromOpcode'));
-		return ob_get_clean();
+		return str_replace('}{', '|', ob_get_clean());
 		}
 
 	/**------------------------------------------------------------------------
@@ -709,7 +709,7 @@ class FineDiff {
 		else /* if ( $opcode === 'i' ) */ {
 			$result = '{' . htmlentities(htmlentities(substr($from, $from_offset, $from_len))) . '}';
 			}
-		echo str_replace('}{', '|', $result);
+		echo $result;
 		}
 	}
 
