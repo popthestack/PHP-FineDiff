@@ -292,6 +292,15 @@ class FineDiff {
 		}
 
 	/**------------------------------------------------------------------------
+	* Render the diff to an Unbindery string
+	*/
+	public static function renderDiffToUnbinderyFromOpcodes($from, $opcodes) {
+		ob_start();
+		FineDiff::renderFromOpcodes($from, $opcodes, array('FineDiff','renderDiffToUnbinderyFromOpcode'));
+		return ob_get_clean();
+		}
+
+	/**------------------------------------------------------------------------
 	* Generic opcodes parser, user must supply callback for handling
 	* single opcode
 	*/
@@ -683,6 +692,24 @@ class FineDiff {
 		else /* if ( $opcode === 'i' ) */ {
  			echo '<ins>', htmlentities(htmlentities(substr($from, $from_offset, $from_len))), '</ins>';
 			}
+		}
+
+	private static function renderDiffToUnbinderyFromOpcode($opcode, $from, $from_offset, $from_len) {
+		$result = '';
+		if ( $opcode === 'c' ) {
+			$result = htmlentities(htmlentities(substr($from, $from_offset, $from_len)));
+			}
+		else if ( $opcode === 'd' ) {
+			$deletion = substr($from, $from_offset, $from_len);
+			if ( strcspn($deletion, " \n\r") === 0 ) {
+				$deletion = str_replace(array("\n","\r"), array('\n','\r'), $deletion);
+				}
+			$result = '{' . htmlentities(htmlentities($deletion)) . '}';
+			}
+		else /* if ( $opcode === 'i' ) */ {
+			$result = '{' . htmlentities(htmlentities(substr($from, $from_offset, $from_len))) . '}';
+			}
+		echo str_replace('}{', '|', $result);
 		}
 	}
 
